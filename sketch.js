@@ -8,7 +8,7 @@
   total incidents 425, total deaths 584
   */
  
-let uk_show = false;
+let uk_show = true;
 let canada_show = false;
 let germany_show = false;
 let france_show = false;
@@ -48,124 +48,157 @@ let country_array = [];
 
 function setup() {
   createCanvas(innerWidth, innerHeight);
-  uk = new Country(1, 0, percent_UK_incidents, percent_UK_deaths, 0, 0, uk_width, uk_height, '#E72B2B');
+  uk = new Country(0, width/2, height/2, uk_width, uk_height, '#E72B2B', 0, 0);
   country_array.push(uk);
-  canada = new Country(2, 2, percent_Canada_incidents, percent_Canada_deaths, 0 + uk.width, 0, canada_width, canada_height, '#CD2121');
+  canada = new Country(2, width/2, height/2, canada_width, canada_height, '#CD2121', uk.width, 0);
   country_array.push(canada);
-  germany = new Country(3, 7, percent_Germany_incidents, percent_Germany_deaths, uk.width + canada.width, 0, germany_width, germany_height,'#B41818');
+  germany = new Country( 7, width/2, height/2, germany_width, germany_height,'#B41818', uk.width + canada.width, 0);
   country_array.push(germany);
-  france = new Country(4, 7, percent_France_incidents, percent_France_deaths, germany.width + canada.width + uk.width, 0, france_width, france_height,'#B41818');
+  france = new Country(7, width/2, height/2, france_width, france_height,'#B41818', uk.width + canada.width + germany.width, 0);
   country_array.push(france);
-  russia = new Country(5, 158, percent_Russia_incidents, percent_Russia_deaths, germany.width + france.width + uk.width + canada.width, 0, russia_width, russia_height, '#9A0E0E');
+  russia = new Country(158, width/2, height/2, russia_width, russia_height, '#9A0E0E', uk.width + canada.width + germany.width + france.width, 0);
   country_array.push(russia);
-  us = new Country(410, 410, percent_Us_incidents, percent_Us_deaths, 0, russia.height, us_width, us_height, '#800404');
+  us = new Country(410, width/2, height/2, us_width, us_height, '#800404', uk.width + canada.width + germany.width + france.width + russia.width, 0);
   country_array.push(us);
   time = millis(); + 100
 }
 
 function draw() {
-  background(0);
-  //uk.display();
-  us.animate_death_count();
+ background(0);
 
-  // for(let i = 0; i < country_array.length; i++){
-  //   country_array[i].display();
-  // }
+ if (uk_show){
+   uk.display();
+   uk.animate_country_moving();
+   
+  }
+  if (canada_show){
+    canada.display();
+    canada.animate_country_moving();
+    
+  }
+  if (germany_show){
+    germany.display();
+    germany.animate_country_moving();
+    
+  }
+  if (france_show){
+    france.display();
+    france.animate_country_moving();
+    
+  }
+  if (russia_show){
+    russia.display();
+    russia.animate_country_moving();
+    
+  }
+  if (us_show){
+    us.display();
+    us.animate_country_moving();
+    
+  }
 
 }
 
 
-function mousePressed(){
-  if (click_count == 1){
+
+
+
+function mousePressed() {
+  click_count++;
+  if (click_count == 1) {
     uk_show = true;
-    click_count++;
-  }
-  if (click_count == 2){
+  } else if (click_count == 2) {
     canada_show = true;
-    click_count++;
-  }
-  if (click_count == 3){
+  } else if (click_count == 3) {
     germany_show = true;
-    click_count++;
-  }
-  if (click_count == 4){
+  } else if (click_count == 4) {
     france_show = true;
-    click_count++;
-  }
-  if (click_count == 5){
+  } else if (click_count == 5) {
     russia_show = true;
-    click_count++;
-  }
-  if (click_count == 6){
+  } else if (click_count == 6) {
     us_show = true;
-    click_count++;
+  }
+  if(uk_show){
+    uk.animate_country_moving();
+  }
+  if(canada_show){
+    canada.animate_country_moving();
+  }
+  if(germany_show){
+    germany.animate_country_moving();
+  }
+  if(france_show){
+    france.animate_country_moving();
+  }
+  if(russia_show){
+    russia.animate_country_moving();
   }
 }
 
 
 
 class Country {
-  constructor(num_incidents, num_deaths, percent_total_incidents, percent_total_deaths, x_pos, y_pos, width, height, color){
-
-    this.num_incidents = num_incidents;
+  constructor(num_deaths, x_pos, y_pos, width, height, color, target_x, target_y) {
     this.num_deaths = num_deaths;
-    this.percent_total_incidents = percent_total_incidents;
-    this.percent_total_deaths = percent_total_deaths;
     this.x_pos = x_pos;
     this.y_pos = y_pos;
     this.width = width;
     this.height = height;
     this.color = color;
+    this.target_x = target_x;
+    this.target_y = target_y;
+    this.current_square_index = 0;
+    this.interval = 500; // Time interval in milliseconds
+    this.last_time = 0;
   }
 
-  display(){
+  display() {
     fill(this.color);
     rect(this.x_pos, this.y_pos, this.width, this.height);
-    // fill(this.color);
-    // rectMode(CENTER);
-    // rect(width/2, height/2, 200, 200);
   }
 
-  animate_death_count() {
-    //how do I draw squares one at a time in a row?
-    //amound of squares = num_deaths
-    //each square is 10x10
-    //animate by starting at top of screen 
-    //When user clicks a certain country, deathcount drops to bottom of screen
-    let body_size = height * 0.1;
-    let yPos = 0 - body_size
-    numBodies = this.num_deaths;
-    fill(this.color);
-    rect(width/4, yPos, body_size, body_size);
-    for (let i = 0; i < numBodies; i++){
-      yPos += body_size;
-      rect(width/4, yPos, body_size, body_size);
-    }
+  // animate_death_count() {
+  //   let current_time = millis();
+  //   if (current_time - this.last_time > this.interval && this.current_square_index < this.num_deaths) {
+  //     let cols = Math.floor(this.width / 10); // Number of columns in the grid
+  //     let x_offset = (this.current_square_index % cols) * 10;
+  //     let y_offset = Math.floor(this.current_square_index / cols) * 10;
 
-  }
+  //     rectMode(CORNER);
+  //     fill(255);
+  //     rect(this.x_pos + x_offset, this.y_pos + y_offset, 10, 10);
 
-  animate_country_moving(){
-    x_speed = 1
-    y_speed = 1
+  //     this.current_square_index++;
+  //     this.last_time = current_time;
+  //   }
+  // }
 
-    while (this.x_pos > 0 && this.y_pos > 0){
-      this.x_pos -= x_speed;
-      this.y_pos -= y_speed;
+  animate_country_moving() {
+    let speed = 2;
+    if (this.x_pos != this.target_x || this.y_pos != this.target_y) {
+      let dx = this.target_x - this.x_pos;
+      let dy = this.target_y - this.y_pos;
+      let angle = atan2(dy, dx);
+      this.x_pos += cos(angle) * speed;
+      this.y_pos += sin(angle) * speed;
+
+      if (abs(dx) < speed) this.x_pos = this.target_x;
+      if (abs(dy) < speed) this.y_pos = this.target_y;
     }
   }
 }
 
-class Body {
-  constructor(x_pos, y_pos, num_bodies){
-    this.x_pos = x_pos;
-    this.y_pos = y_pos;
-    this.color = color;
-    this.size = height * 0.1;
-    this.speed = 1;
-  }
+// class Body {
+//   constructor(x_pos, y_pos, num_bodies){
+//     this.x_pos = x_pos;
+//     this.y_pos = y_pos;
+//     this.color = color;
+//     this.size = height * 0.1;
+//     this.speed = 1;
+//   }
 
-  animatte_bodied(){
-    fill(this.color);
-    rect(this.x_pos, this.y_pos, 10, 10);
-  }
-}
+//   animatte_bodied(){
+//     fill(this.color);
+//     rect(this.x_pos, this.y_pos, 10, 10);
+//   }
+// }
