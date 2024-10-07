@@ -1,7 +1,11 @@
-html, body {
+body, html {
+  height: 100%;
   margin: 0;
-  padding: 0;
+  overflow: hidden; /* Prevent body from scrolling */
 }
-canvas {
-  display: block;
+
+main.scrollable {
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: auto; /* Disable horizontal scrolling */
 }
