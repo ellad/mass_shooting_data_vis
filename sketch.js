@@ -5,6 +5,8 @@ let france_show = false;
 let russia_show = false;
 let us_show = false;
 
+let uk, canada, germany, france, russia, us;
+
 let click_count = 0;
 let percent_Us_incidents = 410 / 425 * 100;
 let percent_UK_incidents = 1 / 425 * 100;
@@ -30,25 +32,45 @@ let france_width = germany_width * 1.3;
 let france_height = germany_height * 1.3;
 let russia_width = france_width * 1.7;
 let russia_height = france_height * 1.7;
-let us_width = russia_width * 82;
-let us_height = russia_height * 82;
+let us_width = innerWidth;
+let us_height = innerHeight;
+
+let uk_flag;
+let canada_flag;
+let germany_flag;
+let france_flag;
+let russia_flag;
+let us_flag;
+
+let skull;
 
 let time;
 let country_array = [];
 
+function preload() {
+  uk_flag= loadImage('assets/UK_flag.png');
+  canada_flag = loadImage('assets/canada_flag.png');
+  germany_flag = loadImage('assets/Germany_flag.png');
+  france_flag = loadImage('assets/France_flag.png');
+  russia_flag = loadImage('assets/russia_flag.png');
+  us_flag = loadImage('assets/ua_flag.png');
+  skull = loadImage('assets/skull.png');
+
+}
+
 function setup() {
   createCanvas(innerWidth, innerHeight);
-  uk = new Country(0, width / 2, height / 2, uk_width, uk_height, '#E72B2B', 0, 0, 'UK');
+  uk = new Country(0, width / 2, height / 2, uk_width, uk_height, '#E72B2B', 0, 0, uk_flag);
   country_array.push(uk);
-  canada = new Country(2, width / 2, height / 2, canada_width, canada_height, '#CD2121', uk.width, 0, 'Canada');
+  canada = new Country(2, width / 2, height / 2, canada_width, canada_height, '#CD2121', uk.width, 0, canada_flag);
   country_array.push(canada);
-  germany = new Country(7, width / 2, height / 2, germany_width, germany_height, '#B41818', uk.width + canada.width, 0, 'Germany');
+  germany = new Country(7, width / 2, height / 2, germany_width, germany_height, '#B41818', uk.width + canada.width, 0, germany_flag);
   country_array.push(germany);
-  france = new Country(7, width / 2, height / 2, france_width, france_height, '#B41818', uk.width + canada.width + germany.width, 0, 'France');
+  france = new Country(7, width / 2, height / 2, france_width, france_height, '#B41818', uk.width + canada.width + germany.width, 0, france_flag);
   country_array.push(france);
-  russia = new Country(158, width / 2, height / 2, russia_width, russia_height, '#9A0E0E', uk.width + canada.width + germany.width + france.width, 0, 'Russia');
+  russia = new Country(158, width / 2, height / 2, russia_width, russia_height, '#9A0E0E', uk.width + canada.width + germany.width + france.width, 0, russia_flag);
   country_array.push(russia);
-  us = new Country(410, width / 2, height / 2, us_width, us_height, '#800404', uk.width + canada.width + germany.width + france.width + russia.width, 0, 'US');
+  us = new Country(410, width / 2, height / 2, us_width, us_height, '#800404', uk.width + canada.width + germany.width + france.width + russia.width, 0, us_flag);
   country_array.push(us);
   time = millis() + 100;
 }
@@ -56,9 +78,9 @@ function setup() {
 function draw() {
   background(0);
 
+
   for (let country of country_array) {
     if (country.show) {
-      country.display_text();
       country.display();
       if (country.state === 'dropBodies') {
         country.dropBodies(country.num_deaths);
@@ -80,30 +102,29 @@ function mousePressed() {
     uk.show = true;
     uk.state = 'dropBodies';
   } else if (click_count == 2) {
-    uk.hide_text();
     canada.show = true;
     canada.state = 'dropBodies';
   } else if (click_count == 3) {
-    canada.hide_text();
     germany.show = true;
     germany.state = 'dropBodies';
   } else if (click_count == 4) {
-    germany.hide_text();
     france.show = true;
     france.state = 'dropBodies';
   } else if (click_count == 5) {
-    france.hide_text();
     russia.show = true;
     russia.state = 'dropBodies';
   } else if (click_count == 6) {
-    russia.hide_text();
     us.show = true;
     us.state = 'dropBodies';
+  }
+  else {
+    click_count = 0;
+    
   }
 }
 
 class Country {
-  constructor(num_deaths, x_pos, y_pos, width, height, color, target_x, target_y, name) {
+  constructor(num_deaths, x_pos, y_pos, width, height, color, target_x, target_y, flag) {
     this.num_deaths = num_deaths;
     this.x_pos = x_pos;
     this.y_pos = y_pos;
@@ -117,7 +138,7 @@ class Country {
     this.last_time = 0;
     this.state = 'display'; // Initial state
     this.show = false;
-    this.name = name;
+    this.flag = flag;
     this.show_text = true;
 
     // For bodies to drop
@@ -146,21 +167,8 @@ class Country {
   }
 
   display() {
-    fill(this.color);
-    rect(this.x_pos - this.width / 2, this.y_pos - this.height / 2, this.width, this.height);
-  }
-
-  display_text() {
-    if (this.show_text) {
-      textAlign(CENTER, CENTER);
-      fill(255);
-      textSize(20);
-      text(this.name, this.x_pos, this.y_pos + this.height / 2 + 20);
-    }
-  }
-
-  hide_text() {
-    this.show_text = false;
+    tint(this.color);
+    image(this.flag,this.x_pos - this.width / 2, this.y_pos - this.height / 2, this.width, this.height);
   }
 
   animate_country_moving() {
@@ -180,8 +188,7 @@ class Country {
 
   dropBodies(numBodies) {
     for (let i = 0; i < numBodies && i < this.bodyPositions.length; i++) {
-      fill(255);
-      ellipse(
+      image(skull,
         this.bodyPositions[i].x,
         this.bodyPositions[i].y,
         this.bodySize,
