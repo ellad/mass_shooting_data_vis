@@ -47,16 +47,16 @@ let skull;
 let time;
 let country_array = [];
 
-function preload() {
-  uk_flag= loadImage('assets/UK_flag.png');
-  canada_flag = loadImage('assets/canada_flag.png');
-  germany_flag = loadImage('assets/Germany_flag.png');
-  france_flag = loadImage('assets/France_flag.png');
-  russia_flag = loadImage('assets/russia_flag.png');
-  us_flag = loadImage('assets/ua_flag.png');
-  skull = loadImage('assets/skull.png');
+// function preload() {
+//   uk_flag= loadImage('assets/UK_flag.png');
+//   canada_flag = loadImage('assets/canada_flag.png');
+//   germany_flag = loadImage('assets/Germany_flag.png');
+//   france_flag = loadImage('assets/France_flag.png');
+//   russia_flag = loadImage('assets/russia_flag.png');
+//   us_flag = loadImage('assets/ua_flag.png');
+//   skull = loadImage('assets/skull.png');
 
-}
+// }
 
 function setup() {
   createCanvas(innerWidth, innerHeight);
@@ -167,8 +167,8 @@ class Country {
   }
 
   display() {
-    tint(this.color);
-    image(this.flag,this.x_pos - this.width / 2, this.y_pos - this.height / 2, this.width, this.height);
+    fill(this.color);
+    rect(this.x_pos - this.width / 2, this.y_pos - this.height / 2, this.width, this.height);
   }
 
   animate_country_moving() {
@@ -188,7 +188,8 @@ class Country {
 
   dropBodies(numBodies) {
     for (let i = 0; i < numBodies && i < this.bodyPositions.length; i++) {
-      image(skull,
+      fill(255);
+      ellipse(
         this.bodyPositions[i].x,
         this.bodyPositions[i].y,
         this.bodySize,
