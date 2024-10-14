@@ -125,7 +125,7 @@ function mousePressed() {
     for (let country of country_array) {
       country.show = false;
       country.state = 'display';
-      country.initializeBodyPositions();
+      country.resetBodyPositions();
     }
   }
 }
@@ -240,5 +240,10 @@ class Country {
 
   allBodiesDropped() {
     return this.bodyPositions.every(pos => pos.speed === 0);
+  }
+
+  resetBodyPositions() {
+    this.bodyPositions = [];
+    this.initializeBodyPositions();
   }
 }
